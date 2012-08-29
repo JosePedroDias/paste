@@ -14,7 +14,7 @@
 
 
 
-    var src, markup, id;
+    var src, markup, id, endpoint = 'storage.php';
 
 
 
@@ -29,6 +29,7 @@
 
 
 
+    // AJAX POST implementation
     var post = function(uri, params, cb) {
         var r = new XMLHttpRequest();
         r.open('POST', uri, true);
@@ -44,7 +45,6 @@
             qs.push( [k, encodeURIComponent(v)].join('=') );
         }
         qs = qs.join('&');
-        //console.log('sending ' + qs + ' to ' + uri);
 
         r.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         r.send(qs);
@@ -54,7 +54,7 @@
 
     // gets source from storage
     var getSource = function(id, cb) {
-        post('storage.php', {op:'load', id:id}, function(err, o) {
+        post(endpoint, {op:'load', id:id}, function(err, o) {
             //console.log(err, o);
             cb(err, o);
         });
@@ -64,7 +64,7 @@
 
     // saves source to storage
     var saveSource = function(id, src, cb) {
-        post('storage.php', {op:'save', id:id, t:src}, function(err, o) {
+        post(endpoint, {op:'save', id:id, t:src}, function(err, o) {
             //console.log(err, o);
             cb(err || o);
         });
@@ -73,7 +73,7 @@
 
 
     var sourceExists = function(id, cb) {
-        post('storage.php', {op:'exists', id:id}, function(err, o) {
+        post(endpoint, {op:'exists', id:id}, function(err, o) {
             //console.log(err, o);
             cb(null, o === 'true');
         });
@@ -81,13 +81,11 @@
 
 
 
-    // fetch/create id
-
+    // fetches/creates id, sets initial state
     var init = function() {
         id = window.location.hash ? window.location.hash.substring(1) : Math.floor(Math.random() * Math.pow(36, 4)).toString(36);
         if (!window.location.hash) { window.location.hash = id; }
 
-        // set initial state
         getSource(id, function(err, s) {
             if (err) {
                 return console.log('error getting source for id ' + id);
