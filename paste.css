@@ -19,6 +19,14 @@ textarea, div {
     padding:            20px;
 }
 
+div {
+    overflow-y:         auto;
+}
+
+textarea {
+    border:             2px solid red;
+}
+
 span {
     position:           fixed;
     right:              4px;

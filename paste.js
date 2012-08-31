@@ -3,7 +3,7 @@
     'use strict';
 
     /*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:false, smarttabs:true */
-    /*global console:false */
+    /*global console:false, Showdown:false */
 
 
 
@@ -21,10 +21,41 @@
     // converts source to markup
     var slashNRgx = /\n/g;
     var uriRgx = /(\S+:\/\/\S+)/g;
+    var firstLineRgx = /^(.*)$/gm;
+
+    var processDefault= function(src) {
+        var res = src.replace(uriRgx, '<a href="$1">$1</a>');
+        res = res.replace(slashNRgx, '<br/>');
+        return ['<pre>', res, '</pre>'].join('');
+    };
+
+    var md = new Showdown.converter();
+    var processMarkdown = function(src) {
+        return md.makeHtml(src);
+    };
+
+    var formats = {
+        md: processMarkdown
+    };
+
     var processSource = function(src) {
-        markup = src.replace(uriRgx, '<a href="$1">$1</a>');
-        markup = markup.replace(slashNRgx, '<br/>');
-        divEl.innerHTML = ['<pre>', markup, '</pre>'].join('');
+        firstLineRgx.lastIndex = 0;
+        var format = firstLineRgx.exec(src)[1] || '';
+        
+        var formatter = formats[format];
+
+        var src2;
+        if (formatter) {
+            src2 = src.substring(format.length);
+        }
+        else {
+            formatter = processDefault;
+            src2 = src;
+        }
+        
+        markup = formatter(src2);
+        divEl.className = format;
+        divEl.innerHTML = markup;
     };
 
 
@@ -93,6 +124,7 @@
             src = s;
             taEl.value = src;
             processSource(src);
+            document.title = 'paste - ' + id;
             btnEl.focus();
             /*console.log('got source:');
             console.log(src);*/
@@ -102,29 +134,32 @@
 
     
 
-    var onBtnClick = function(ev) {
-        var cmd = btnEl.innerHTML;
-
-        if (cmd === 'edit') {
-            taEl.style.display = '';
+    var cmdEdit = function() {
+        taEl.style.display = '';
             divEl.style.display = 'none';
             btnEl.innerHTML = 'save';
             taEl.focus();
-        }
-        else if (cmd === 'save') {
-            src = taEl.value;
+    };
+
+    var cmdSave = function(skipSwitch) {
+        src = taEl.value;
             
-            saveSource(id, src, function(err) {
-                if (err) {
-                    return console.log('error saving source');
-                }
+        saveSource(id, src, function(err) {
+            if (err) { return console.log('error saving source'); }
+            if (!skipSwitch) {
                 processSource(src);
                 taEl.style.display = 'none';
                 divEl.style.display = '';
                 btnEl.innerHTML = 'edit';
-                //console.log('saved source');
-            });
-        }
+            }
+            console.log('saved source');
+        });
+    };
+
+    var onBtnClick = function(ev) {
+        var cmd = btnEl.innerHTML;
+        if      (cmd === 'edit') { cmdEdit(); }
+        else if (cmd === 'save') { cmdSave(); }
     };
 
 
@@ -133,9 +168,17 @@
         init();
     };
 
-
+    var onKeyDown = function(ev) {
+        if (ev.ctrlKey && ev.keyCode === 83) {
+            ev.preventDefault();
+            if (btnEl.innerHTML === 'save') { cmdSave(true); }
+        }
+    };
 
     btnEl.addEventListener('click',       onBtnClick);
     window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('keydown',    onKeyDown);
+
+    //document.body.app
     
 })(window, undefined);
