@@ -1,11 +1,16 @@
+.md {
+    font-family: sans-serif;
+}
+
 .md ul {
     list-style-type: square;
     list-style-position: inside;
+    margin-top: 0.5em;
 }
 
 .md h1, .md h2, .md h3, .md h4 {
     margin:0;
-    margin-bottom: 0.5em;
+    margin-top: 0.5em;
     color: #037;
 }
 
