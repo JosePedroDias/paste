@@ -17,7 +17,7 @@
 
 
     // validate id
-    if ($op !== 'list' && is_valid_id($id)) {
+    if ($op !== 'list' && !is_valid_id($id)) {
         echo 'invalid id!';
         exit(0);
     }
