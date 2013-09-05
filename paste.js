@@ -1,5 +1,5 @@
 (function(window) {
-    
+
     'use strict';
 
     /*jshint browser:true, eqeqeq:true, undef:true, curly:true, laxbreak:true, forin:false, smarttabs:true */
@@ -41,7 +41,7 @@
     var processSource = function(src) {
         firstLineRgx.lastIndex = 0;
         var format = firstLineRgx.exec(src)[1] || '';
-        
+
         var formatter = formats[format];
 
         var src2;
@@ -52,7 +52,7 @@
             formatter = processDefault;
             src2 = src;
         }
-        
+
         markup = formatter(src2);
         divEl.className = format;
         divEl.innerHTML = markup;
@@ -132,7 +132,7 @@
     };
     init();
 
-    
+
 
     var cmdEdit = function() {
         taEl.style.display = '';
@@ -143,7 +143,7 @@
 
     var cmdSave = function(skipSwitch) {
         src = taEl.value;
-            
+
         saveSource(id, src, function(err) {
             if (err) { return console.log('error saving source'); }
             if (!skipSwitch) {
@@ -179,6 +179,11 @@
     window.addEventListener('hashchange', onHashChange);
     window.addEventListener('keydown',    onKeyDown);
 
+    // http://jakiestfu.github.io/Behave.js/ for indentation
+    var editor = new Behave({
+        textarea: document.querySelector('textarea')
+    });
+
     //document.body.app
-    
+
 })(window, undefined);
