@@ -11,7 +11,7 @@
     var divEl = document.getElementsByTagName('div')[0];
     var taEl  = document.getElementsByTagName('textarea')[0];
     var btnEl = document.getElementsByTagName('button')[0];
-
+    var btnServeEl = document.getElementsByTagName('button')[1];
 
 
     var src, markup, id, endpoint = 'storage.php';
@@ -156,10 +156,15 @@
         });
     };
 
+    var cmdServe = function() {
+	window.open('serve.php?id=' + id, '_blank');
+    };
+
     var onBtnClick = function(ev) {
-        var cmd = btnEl.innerHTML;
-        if      (cmd === 'edit') { cmdEdit(); }
-        else if (cmd === 'save') { cmdSave(); }
+        var cmd = ev.target.innerHTML;
+        if      (cmd === 'edit') {  cmdEdit();  }
+        else if (cmd === 'save') {  cmdSave();  }
+	else if (cmd === 'serve') { cmdServe(); }
     };
 
 
@@ -176,6 +181,7 @@
     };
 
     btnEl.addEventListener('click',       onBtnClick);
+    btnServeEl.addEventListener('click',  onBtnClick);
     window.addEventListener('hashchange', onHashChange);
     window.addEventListener('keydown',    onKeyDown);
 
