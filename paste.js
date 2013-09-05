@@ -157,14 +157,14 @@
     };
 
     var cmdServe = function() {
-	window.open('serve.php?id=' + id, '_blank');
+        window.open('serve.php?id=' + id, '_blank');
     };
 
     var onBtnClick = function(ev) {
         var cmd = ev.target.innerHTML;
         if      (cmd === 'edit') {  cmdEdit();  }
         else if (cmd === 'save') {  cmdSave();  }
-	else if (cmd === 'serve') { cmdServe(); }
+        else if (cmd === 'serve') { cmdServe(); }
     };
 
 

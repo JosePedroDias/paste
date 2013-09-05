@@ -24,7 +24,7 @@
 
     // process operation
     if (file_exists($fn)) {
-	header('Content-Type: text/html');
+    header('Content-Type: text/html');
         echo file_get_contents($fn);
     }
     else {
