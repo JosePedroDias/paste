@@ -7,6 +7,18 @@
 
 
 
+(function() {
+  var writer = new stmd.HtmlRenderer();
+  var reader = new stmd.DocParser();
+  
+  window.markdown2html = function(md) {
+    var parsed = reader.parse(md);
+    return writer.renderBlock(parsed);
+  };
+})();
+
+
+
     // relevant DOM elements
     var divEl = document.getElementsByTagName('div')[0];
     var taEl  = document.getElementsByTagName('textarea')[0];
@@ -29,10 +41,7 @@
         return ['<pre>', res, '</pre>'].join('');
     };
 
-    var md = new Showdown.converter();
-    var processMarkdown = function(src) {
-        return md.makeHtml(src);
-    };
+    var processMarkdown = window.markdown2html;
 
     var formats = {
         md: processMarkdown
